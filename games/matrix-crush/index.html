@@ -112,20 +112,20 @@
       const shell = document.getElementById("game-shell");
       const fullscreenBtn = document.getElementById("fullscreen");
 
-      const resize = () => {
+      const resizeCanvas = () => {
         gameCanvas.width = shell.clientWidth;
         gameCanvas.height = shell.clientHeight;
       };
-      window.addEventListener("resize", resize);
-      resize();
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
 
       fullscreenBtn.addEventListener("click", async () => {
         if (!document.fullscreenElement) {
           await shell.requestFullscreen();
-          resize();
+          resizeCanvas();
         } else {
           await document.exitFullscreen();
-          resize();
+          resizeCanvas();
         }
       });
 
