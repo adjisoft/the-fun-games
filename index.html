@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rayhex Games Vault</title>
+    <style>
+      :root {
+        --bg: #040a05;
+        --grid: rgba(0, 255, 128, 0.08);
+        --neon: #22ff99;
+        --neon-soft: rgba(34, 255, 153, 0.55);
+        --panel: rgba(0, 20, 8, 0.8);
+        --muted: rgba(34, 255, 153, 0.6);
+      }
+      * {
+        box-sizing: border-box;
+        font-family: "Consolas", "Menlo", "Courier New", monospace;
+      }
+      body {
+        margin: 0;
+        background:
+          linear-gradient(transparent 95%, rgba(34, 255, 153, 0.06) 96%) 0 0/100% 24px,
+          linear-gradient(90deg, transparent 95%, rgba(34, 255, 153, 0.06) 96%) 0 0/24px 100%,
+          var(--bg);
+        color: var(--neon);
+        min-height: 100vh;
+      }
+      header {
+        padding: 28px 6vw 10px;
+      }
+      .title {
+        font-size: 26px;
+        letter-spacing: 2px;
+      }
+      .subtitle {
+        color: var(--muted);
+        margin-top: 6px;
+        font-size: 14px;
+      }
+      .controls {
+        display: grid;
+        gap: 12px;
+        padding: 0 6vw 18px;
+      }
+      .search {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .search input {
+        flex: 1;
+        padding: 10px 12px;
+        background: var(--panel);
+        border: 1px solid var(--neon-soft);
+        color: var(--neon);
+        outline: none;
+      }
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .chip {
+        padding: 6px 12px;
+        border: 1px solid var(--neon-soft);
+        background: transparent;
+        color: var(--neon);
+        cursor: pointer;
+      }
+      .chip.active {
+        background: rgba(34, 255, 153, 0.2);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+        padding: 0 6vw 40px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--neon-soft);
+        padding: 16px;
+      }
+      .card-title {
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+      .card-desc {
+        font-size: 13px;
+        color: var(--muted);
+        min-height: 44px;
+      }
+      .tags {
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .actions {
+        margin-top: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .play {
+        text-decoration: none;
+        color: var(--neon);
+        border: 1px solid var(--neon);
+        padding: 6px 12px;
+      }
+      .status {
+        font-size: 12px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="title">RAYHEX GAMES VAULT</div>
+      <div class="subtitle">Private collection - search, filter, play</div>
+    </header>
+
+    <section class="controls">
+      <div class="search">
+        <span>Search</span>
+        <input id="search" type="text" placeholder="Type game title or tag..." />
+      </div>
+      <div class="filters" id="filters"></div>
+    </section>
+
+    <section class="grid" id="grid"></section>
+
+    <script>
+      const games = [
+        {
+          title: "Matrix Crush",
+          slug: "matrix-crush",
+          description: "Classic ASCII match puzzle. Old version of Matrix Crushed.",
+          tags: ["puzzle", "classic", "ascii"],
+          status: "Playable",
+        },
+      ];
+
+      const state = { query: "", tag: "all" };
+      const filters = document.getElementById("filters");
+      const grid = document.getElementById("grid");
+      const search = document.getElementById("search");
+
+      const allTags = [
+        "all",
+        ...new Set(games.flatMap((g) => g.tags)),
+      ];
+
+      const renderFilters = () => {
+        filters.innerHTML = "";
+        allTags.forEach((tag) => {
+          const btn = document.createElement("button");
+          btn.className = "chip" + (state.tag === tag ? " active" : "");
+          btn.textContent = tag.toUpperCase();
+          btn.onclick = () => {
+            state.tag = tag;
+            renderFilters();
+            renderGrid();
+          };
+          filters.appendChild(btn);
+        });
+      };
+
+      const renderGrid = () => {
+        const query = state.query.toLowerCase();
+        const items = games.filter((g) => {
+          const matchTag = state.tag === "all" || g.tags.includes(state.tag);
+          const matchQuery =
+            g.title.toLowerCase().includes(query) ||
+            g.tags.some((t) => t.includes(query));
+          return matchTag && matchQuery;
+        });
+
+        grid.innerHTML = items
+          .map(
+            (g) => `
+            <div class="card">
+              <div class="card-title">${g.title}</div>
+              <div class="card-desc">${g.description}</div>
+              <div class="tags">Tags: ${g.tags.join(", ")}</div>
+              <div class="actions">
+                <a class="play" href="./games/${g.slug}/">Play</a>
+                <span class="status">${g.status}</span>
+              </div>
+            </div>
+          `
+          )
+          .join("");
+      };
+
+      search.addEventListener("input", (e) => {
+        state.query = e.target.value;
+        renderGrid();
+      });
+
+      renderFilters();
+      renderGrid();
+    </script>
+  </body>
+</html>
