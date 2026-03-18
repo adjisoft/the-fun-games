@@ -1,0 +1,8 @@
+```
+# Build artifacts
+*.js.map
+*.min.js
+*.bundle.js
+dist/
+build/
+```

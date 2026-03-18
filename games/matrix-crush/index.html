@@ -107,40 +107,42 @@
 
     <script src="./mq_js_bundle.js"></script>
     <script>
-      const loader = document.getElementById("loader");
-      const gameCanvas = document.getElementById("glcanvas");
-      const shell = document.getElementById("game-shell");
-      const fullscreenBtn = document.getElementById("fullscreen");
+      (function() {
+        const loader = document.getElementById("loader");
+        const gameCanvas = document.getElementById("glcanvas");
+        const shell = document.getElementById("game-shell");
+        const fullscreenBtn = document.getElementById("fullscreen");
 
-      const resizeCanvas = () => {
-        gameCanvas.width = shell.clientWidth;
-        gameCanvas.height = shell.clientHeight;
-      };
-      window.addEventListener("resize", resizeCanvas);
-      resizeCanvas();
+        const resizeCanvas = () => {
+          gameCanvas.width = shell.clientWidth;
+          gameCanvas.height = shell.clientHeight;
+        };
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
 
-      fullscreenBtn.addEventListener("click", async () => {
-        if (!document.fullscreenElement) {
-          await shell.requestFullscreen();
-          resizeCanvas();
+        fullscreenBtn.addEventListener("click", async () => {
+          if (!document.fullscreenElement) {
+            await shell.requestFullscreen();
+            resizeCanvas();
+          } else {
+            await document.exitFullscreen();
+            resizeCanvas();
+          }
+        });
+
+        if (typeof load !== "function") {
+          loader.textContent = "Loader JS tidak ditemukan (mq_js_bundle.js).";
         } else {
-          await document.exitFullscreen();
-          resizeCanvas();
+          try {
+            load("matrix_crushed.wasm");
+            setTimeout(() => loader.classList.add("hidden"), 800);
+          } catch (err) {
+            console.error(err);
+            loader.textContent =
+              "Failed to load game files. Pastikan mq_js_bundle.js dan matrix_crushed.wasm ada.";
+          }
         }
-      });
-
-      if (typeof load !== "function") {
-        loader.textContent = "Loader JS tidak ditemukan (mq_js_bundle.js).";
-      } else {
-        try {
-          load("matrix_crushed.wasm");
-          setTimeout(() => loader.classList.add("hidden"), 800);
-        } catch (err) {
-          console.error(err);
-          loader.textContent =
-            "Failed to load game files. Pastikan mq_js_bundle.js dan matrix_crushed.wasm ada.";
-        }
-      }
+      })();
     </script>
   </body>
 </html>
