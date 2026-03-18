@@ -108,13 +108,13 @@
     <script src="./mq_js_bundle.js"></script>
     <script>
       const loader = document.getElementById("loader");
-      const canvas = document.getElementById("glcanvas");
+      const gameCanvas = document.getElementById("glcanvas");
       const shell = document.getElementById("game-shell");
       const fullscreenBtn = document.getElementById("fullscreen");
 
       const resize = () => {
-        canvas.width = shell.clientWidth;
-        canvas.height = shell.clientHeight;
+        gameCanvas.width = shell.clientWidth;
+        gameCanvas.height = shell.clientHeight;
       };
       window.addEventListener("resize", resize);
       resize();
