@@ -105,6 +105,7 @@
       <canvas id="glcanvas"></canvas>
     </div>
 
+    <script src="./mq_js_bundle.js"></script>
     <script>
       const loader = document.getElementById("loader");
       const canvas = document.getElementById("glcanvas");
@@ -128,16 +129,18 @@
         }
       });
 
-      import("./matrix_crushed.js")
-        .then((module) => module.default())
-        .then(() => {
-          loader.classList.add("hidden");
-        })
-        .catch((err) => {
+      if (typeof load !== "function") {
+        loader.textContent = "Loader JS tidak ditemukan (mq_js_bundle.js).";
+      } else {
+        try {
+          load("matrix_crushed.wasm");
+          setTimeout(() => loader.classList.add("hidden"), 800);
+        } catch (err) {
           console.error(err);
           loader.textContent =
-            "Failed to load game files. Pastikan matrix_crushed.js dan matrix_crushed_bg.wasm ada.";
-        });
+            "Failed to load game files. Pastikan mq_js_bundle.js dan matrix_crushed.wasm ada.";
+        }
+      }
     </script>
   </body>
 </html>
