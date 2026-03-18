@@ -105,9 +105,7 @@
       <canvas id="glcanvas"></canvas>
     </div>
 
-    <script type="module">
-      import init from "./matrix_crushed.js";
-
+    <script>
       const loader = document.getElementById("loader");
       const canvas = document.getElementById("glcanvas");
       const shell = document.getElementById("game-shell");
@@ -130,13 +128,15 @@
         }
       });
 
-      init()
+      import("./matrix_crushed.js")
+        .then((module) => module.default())
         .then(() => {
           loader.classList.add("hidden");
         })
         .catch((err) => {
           console.error(err);
-          loader.textContent = "Failed to start game. Check console.";
+          loader.textContent =
+            "Failed to load game files. Pastikan matrix_crushed.js dan matrix_crushed_bg.wasm ada.";
         });
     </script>
   </body>
